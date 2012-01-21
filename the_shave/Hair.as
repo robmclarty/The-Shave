@@ -5,22 +5,23 @@ package the_shave {
   import flash.utils.getTimer;
   import flash.utils.Timer;
   
+  import org.coretween.Tween;
+  import org.coretween.TweenEvent;
+  import org.coretween.easing.Expo;
+  
   public class Hair extends Sprite {
-    private static var OFF_SCREEN_THRESHOLD = 1000; // pixels
-    private static var FALLING_ACCELERATION = 1.1;
-    private static var FRAME_RATE = 50; // milliseconds
+    private static var MAX_Y:uint = 1000; // pixels
+    private static var FALL_TIME:Number = 6; // seconds
     
     private var _shaved:Boolean = false;
     private var _startx:int;
     private var _starty:int;
-    private var _timer:Timer;
-//    private var last_update_time:
+    private var _tween:Tween;
     
     // Constructor
     public function Hair(startx:int, starty:int):void {
       this.x = _startx = startx;
-      this.y = _starty = starty;
-      _timer = new Timer(FRAME_RATE);
+      this.y = _starty = starty;      
       reset_hair();
     }
     
@@ -30,16 +31,13 @@ package the_shave {
     private function hair_cut(e:MouseEvent):void {
       this.removeEventListener(MouseEvent.MOUSE_OVER, hair_cut);
       _shaved = true;
-      _timer.addEventListener(TimerEvent.TIMER, animate_fall_off);
-      _timer.start();
+      _tween = new Tween(this, { y: this.y + MAX_Y }, FALL_TIME, Expo.easeOut);
+      _tween.addEventListener(TweenEvent.COMPLETE, tween_finished);
+      _tween.start();
     }
     
-    private function animate_fall_off(e:TimerEvent):void {
-      this.y = this.y * FALLING_ACCELERATION;
-      if (this.y > stage.stageHeight + OFF_SCREEN_THRESHOLD) {
-        _timer.stop();
-        reset_hair();
-      }
+    private function tween_finished(e:TweenEvent):void {
+      reset_hair();
     }
     
     // Helpers
@@ -47,6 +45,11 @@ package the_shave {
       this.y = _starty;
       this.x = _startx;
       this.addEventListener(MouseEvent.MOUSE_OVER, hair_cut);
+      if (_tween) {
+        _tween.removeEventListener(TweenEvent.COMPLETE, reset_hair);
+        _tween = null;
+      }
+      //_previous_time = 0;
     }
   }
 }
