@@ -13,7 +13,8 @@ package {
       for (var i:uint = 0; i < 300; i += 1) {
         var hair_startx = random_range(stage.stageWidth);
         var hair_starty = random_range(stage.stageHeight);
-        var hair = new Hair(hair_startx, hair_starty);
+        var hair_start_rotation = random_range(360); // * Math.PI / 180;
+        var hair = new Hair(hair_startx, hair_starty, hair_start_rotation);
         hairs.push(hair);
         addChild(hair);
       }
