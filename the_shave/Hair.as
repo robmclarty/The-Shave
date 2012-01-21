@@ -1,10 +1,6 @@
 package the_shave {
   import flash.display.Sprite;
-  import flash.events.MouseEvent;
-  import flash.events.TimerEvent;
-  import flash.utils.getTimer;
-  import flash.utils.Timer;
-  
+  import flash.events.MouseEvent;  
   import org.coretween.Tween;
   import org.coretween.TweenEvent;
   import org.coretween.easing.Expo;
