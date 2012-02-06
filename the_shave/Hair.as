@@ -9,7 +9,7 @@ package the_shave {
 
   public class Hair extends Sprite {
     private static var MAX_Y:uint = 1000; // pixels
-    private static var FALL_TIME:Number = 6; // seconds
+    private static var FALL_TIME:Number = 1.5; // seconds
     private static var DEFAULT_GROW_RATE = 100; // seconds
 
     private var _shaved:Boolean = false;
@@ -19,11 +19,16 @@ package the_shave {
     private var _grow_rate:Number = DEFAULT_GROW_RATE;
     private var _timer:Timer;
 
+
     // Constructor
     public function Hair(startx:int, starty:int, start_rotation:int):void {
+      this.cacheAsBitmap = true;
       this.x = _startx = startx;
       this.y = _starty = starty;
       this.rotation = start_rotation;
+      if (start_rotation > 90 || start_rotation < -90) {
+        this.scaleY = -this.scaleY; // Flip graphic to mirror on face.
+      }
       reset_hair();
     }
 
@@ -33,6 +38,10 @@ package the_shave {
       _tween = new Tween(this, { y: this.y + MAX_Y }, FALL_TIME, Expo.easeOut);
       _tween.addEventListener(TweenEvent.COMPLETE, tween_finished);
       _tween.start();
+    }
+
+    public function not_yet_cut():Boolean {
+      return !_shaved;
     }
 
     // Events
@@ -53,6 +62,7 @@ package the_shave {
       this.y = _starty;
       this.x = _startx;
       this.mustache_hair.gotoAndStop(1);
+      _shaved = false;
       //this.addEventListener(MouseEvent.MOUSE_OVER, hair_cut);
       if (_tween) {
         _tween.removeEventListener(TweenEvent.COMPLETE, reset_hair);
